@@ -27,6 +27,9 @@ public class LobbyController : MonoBehaviour
     //Manager
     private CustomNetworkManager manager;
 
+    //Ready / Start
+    public Button StartGameButton;
+
     private CustomNetworkManager Manager
     {
         get
@@ -42,6 +45,17 @@ public class LobbyController : MonoBehaviour
     private void Awake()
     {
         if (Instance == null) { Instance = this; }
+    }
+
+    public void CheckIfAllReady() {
+        /*LocalPlayerObject = GameObject.Find("LocalGamePlayer");
+        if (LocalPlayerObject.GetComponent<PlayerObjectController>().PlayerIdNumber == 1)
+        {
+            StartGameButton.interactable = true;
+        }
+        else {
+            StartGameButton.interactable = false;
+        }*/
     }
 
     public void UpdateLobbyName() {
@@ -64,17 +78,16 @@ public class LobbyController : MonoBehaviour
     public void CreateHostPlayerItem() {
         foreach (PlayerObjectController player in Manager.GamePlayers) {
             GameObject NewPlayerItem = Instantiate(PlayerListItemPrefab) as GameObject;
-            PlayerListItem NewPlayerIstemScript = NewPlayerItem.GetComponent<PlayerListItem>();
+            PlayerListItem NewPlayerItemScript = NewPlayerItem.GetComponent<PlayerListItem>();
 
-            NewPlayerIstemScript.PlayerName = player.PlayerName;
-            NewPlayerIstemScript.ConnectionID = player.ConnectionID;
-            NewPlayerIstemScript.PlayerSteamID = player.PlayerSteamID;
-            NewPlayerIstemScript.SetPlayerValues();
+            NewPlayerItemScript.PlayerName = player.PlayerName;
+            NewPlayerItemScript.ConnectionID = player.ConnectionID;
+            NewPlayerItemScript.PlayerSteamID = player.PlayerSteamID;
+            NewPlayerItemScript.SetPlayerValues();
 
             NewPlayerItem.transform.SetParent(PlayerListViewContent.transform);
             NewPlayerItem.transform.localScale = Vector3.one;
-
-            PlayerListItems.Add(NewPlayerIstemScript);
+            PlayerListItems.Add(NewPlayerItemScript);
         }
         PlayerItemCreated = true;
     }
@@ -110,13 +123,14 @@ public class LobbyController : MonoBehaviour
                 }
             }
         }
+        //CheckIfAllReady();
     }
     public void RemovePlayerItem() {
         List<PlayerListItem> playerListItemToRemove = new List<PlayerListItem>();
 
-        foreach (PlayerListItem playerListItem in PlayerListItems) {
-            if (!Manager.GamePlayers.Any(b => b.ConnectionID == playerListItem.ConnectionID)) {
-                playerListItemToRemove.Add(playerListItem);
+        foreach (PlayerListItem playerlistItem in PlayerListItems) {
+            if (!Manager.GamePlayers.Any(b => b.ConnectionID == playerlistItem.ConnectionID)) {
+                playerListItemToRemove.Add(playerlistItem);
             }
         }
         if (playerListItemToRemove.Count > 0) {
@@ -127,6 +141,10 @@ public class LobbyController : MonoBehaviour
                 ObjectToRemove = null;
             }
         }
+    }
+
+    public void StartGame(string SceneName) {
+        LocalplayerController.CanStartGame(SceneName);
     }
 
 }

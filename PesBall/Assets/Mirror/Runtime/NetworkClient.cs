@@ -437,7 +437,7 @@ namespace Mirror
         {
             // transport errors will happen. logging a warning is enough.
             // make sure the user does not panic.
-            Debug.LogWarning($"Client Transport Error: {error}: {reason}. This is fine.");
+            Debug.LogWarning($"Client Transport Error: {error}: {reason}. This is not fine.");
             OnErrorEvent?.Invoke(error, reason);
         }
 

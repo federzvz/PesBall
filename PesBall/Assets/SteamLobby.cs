@@ -5,7 +5,8 @@ using Mirror;
 using Steamworks;
 using UnityEngine.UI;
 
-public class SteamLobby : MonoBehaviour{
+public class SteamLobby : MonoBehaviour
+{
 
     public static SteamLobby Instance;
 
@@ -20,9 +21,10 @@ public class SteamLobby : MonoBehaviour{
     private CustomNetworkManager manager;
 
 
-    private void Start() {
+    private void Start()
+    {
         if (!SteamManager.Initialized) { return; }
-        if (Instance == null) { Instance = this; } 
+        if (Instance == null) { Instance = this; }
 
         manager = GetComponent<CustomNetworkManager>();
 
@@ -31,11 +33,13 @@ public class SteamLobby : MonoBehaviour{
         LobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
     }
 
-    public void HostLobby() {
+    public void HostLobby()
+    {
         SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, manager.maxConnections);
     }
 
-    private void OnLobbyCreated(LobbyCreated_t callback) {
+    private void OnLobbyCreated(LobbyCreated_t callback)
+    {
         if (callback.m_eResult != EResult.k_EResultOK) { return; }
 
         Debug.Log("Lobby Created :))))");
@@ -46,18 +50,22 @@ public class SteamLobby : MonoBehaviour{
         SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), "name", SteamFriends.GetPersonaName().ToString() + "'S LOBBY");
     }
 
-    private void OnJoinRequest(GameLobbyJoinRequested_t callback) {
+    private void OnJoinRequest(GameLobbyJoinRequested_t callback)
+    {
         Debug.Log("Request to join Lobby");
         SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
     }
 
     private void OnLobbyEntered(LobbyEnter_t callback)
     {
+        Debug.Log("LOBBY JOINED");
         //Everyone
         CurrentLobbyID = callback.m_ulSteamIDLobby;
 
         //Clients
-        if (NetworkServer.active){return;}
+        if (NetworkServer.active) { return; }
+
+        Debug.Log("EL CODIGO CONTINUÓ");
 
         manager.networkAddress = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey);
 

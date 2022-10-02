@@ -14,6 +14,11 @@ public class PlayerObjectController : NetworkBehaviour
 
     private CustomNetworkManager manager;
 
+    private void Start()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
+
     private CustomNetworkManager Manager
     {
         get {
@@ -50,8 +55,6 @@ public class PlayerObjectController : NetworkBehaviour
         this.PlayerNameUpdate(this.PlayerName, PlayerName);
     }
 
-
-
     public void PlayerNameUpdate(string OldValue, string NewValue) {
         if (isServer) { // Host
             this.PlayerName = NewValue;
@@ -60,6 +63,19 @@ public class PlayerObjectController : NetworkBehaviour
             LobbyController.Instance.UpdatePlayerList();
         }
         
+    }
+
+    //Start Game
+    public void CanStartGame(string SceneName) {
+        if (hasAuthority) {
+            cmdCanStartGame(SceneName);
+        }
+    }
+
+    [Command]
+    public void cmdCanStartGame(string SceneName)
+    {
+        manager.StartGame(SceneName);
     }
 
 }
